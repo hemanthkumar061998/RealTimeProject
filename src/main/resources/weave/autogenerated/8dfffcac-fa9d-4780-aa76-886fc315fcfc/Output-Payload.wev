@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_8dfffcac_fa9d_4780_aa76_886fc315fcfc_Output_Payload = Array<{|  companyName?: String,   departureLocation?: String,   destinationLocation?: String|}>
+

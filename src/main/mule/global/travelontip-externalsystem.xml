@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="travelontip-externalsystemFlow" doc:id="8e8a0997-0ae2-44b6-a8b7-41520aee9126" >
+		<http:listener doc:name="Listener" doc:id="066d6092-2ba2-4786-83be-ea66a8ecdf01" config-ref="HTTP_Listener_config1" path="${http.listner.path}">
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="3e6048c3-a241-422f-b183-935af4d92f82" message="Request sent for TravelOnTip for TransactionId: #[attributes.headers.transactionId]"/>
+		<ee:transform doc:name="Transform Message" doc:id="5ac58398-9540-4218-9bc0-6794d9042290" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="serviceType" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.serviceType]]></ee:set-variable>
+				<ee:set-variable variableName="transactionId" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.headers.transactionId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="9077c01b-4967-4b2c-8350-cd912b0c42db" >
+			<when expression='#[vars.serviceType=="getRoutes"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="ff93cd12-50c6-468b-b2f6-4f787c51237a" message="getRoutes flow called"/>
+				<flow-ref doc:name="Flow Reference" doc:id="6d8385c8-fe9b-46e2-ab20-b20bd7da0d98" name="TravelOnTip-GetRoutes-ImplementationFlow"/>
+			</when>
+			<when expression='#[vars.serviceType=="getSchedules"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="a985457d-95a6-4b90-b197-bfabc1e8b613" message="Request received to getSchedules on TravelOnTip for TransactionId: #[attributes.headers.transactionId]"/>
+				<flow-ref doc:name="Flow Reference" doc:id="6f66eeda-63b2-4c46-9032-e63c1bebb5c5" name="TravelOnTip-GetSchedules-ImplementationSub_Flow" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="6da78d38-667c-4f83-853d-42e117dfed6a" message="Default route executed"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="ef93dc04-0730-48e7-bf7f-f2226919832c" message="Request sent for TravelOnTip for getRoutes on transactionId: #[vars.transactionId]"/>
+	</flow>
+</mule>

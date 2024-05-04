@@ -1,0 +1,12 @@
+http:
+  listner:
+    host: "localhost"
+    port: "8081"
+    path: "/travelOnTip/{serviceType}"
+db:
+  getRoutes:
+    password: "admin1162"
+    user: "admin"
+    port: "3306"
+    database: "TravelCompany_db"
+    host: "database-1.c5g6ca4ymfcf.eu-north-1.rds.amazonaws.com"
